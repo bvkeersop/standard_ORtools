@@ -1,0 +1,11 @@
+C:\Users\bartk\source\repos\standard_ORtools\standard_ORtools\bin\Debug\standard_ORtools.exe.config
+C:\Users\bartk\source\repos\standard_ORtools\standard_ORtools\bin\Debug\standard_ORtools.exe
+C:\Users\bartk\source\repos\standard_ORtools\standard_ORtools\bin\Debug\standard_ORtools.pdb
+C:\Users\bartk\source\repos\standard_ORtools\standard_ORtools\bin\Debug\Google.OrTools.dll
+C:\Users\bartk\source\repos\standard_ORtools\standard_ORtools\bin\Debug\Google.Protobuf.dll
+C:\Users\bartk\source\repos\standard_ORtools\standard_ORtools\bin\Debug\Google.Protobuf.xml
+C:\Users\bartk\source\repos\standard_ORtools\standard_ORtools\obj\Debug\standard_ORtools.csprojAssemblyReference.cache
+C:\Users\bartk\source\repos\standard_ORtools\standard_ORtools\obj\Debug\standard_ORtools.csproj.CoreCompileInputs.cache
+C:\Users\bartk\source\repos\standard_ORtools\standard_ORtools\obj\Debug\standard_ORtools.csproj.CopyComplete
+C:\Users\bartk\source\repos\standard_ORtools\standard_ORtools\obj\Debug\standard_ORtools.exe
+C:\Users\bartk\source\repos\standard_ORtools\standard_ORtools\obj\Debug\standard_ORtools.pdb
