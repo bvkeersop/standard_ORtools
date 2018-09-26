@@ -5,12 +5,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using standard_ORtools.Service;
+using standard_ORtools.Model;
 
 namespace standard_ORtools
 {
     class Program
     {
-        private static Service.MockDataGenerator mockDataGenerator;
+        private static MockDataGenerator mockDataGenerator;
+        private static ParameterMap parameterMapper;
 
         static void Main(string[] args)
         {
@@ -19,22 +22,39 @@ namespace standard_ORtools
             Console.ReadLine();
             RunLinearProgrammingExample("GLOP_LINEAR_PROGRAMMING");
             */
-            Console.WriteLine("Running test program, press enter to continue.");
+            Console.WriteLine("Program started");
+
+            //Generate the consultants and clients.
+            Console.WriteLine("Press any key to generate test data (consultants and clients).");
             Console.ReadKey();
-            testGenerator();
-            //SolveMinCostFlow();
+            var consultantsList = GenerateConsultants();
+
+            //Map the data so it's usable.
+            Console.WriteLine("Press any key to start mapping the data to a useable format.");
+            Console.ReadKey();
+            var parameterMap = new ParameterMap(consultantsList);
+            parameterMap.WriteDataToConsole();
+
+            //Do calculations
+            Console.WriteLine("Press any key to start solving the problem.");
+            Console.ReadKey();
+            SolveMinCostFlow(parameterMap);
+
         }
 
-        private static void testGenerator()
+        private static List<Consultant> GenerateConsultants()
         {
             Console.WriteLine("Generating testdata.");
-            mockDataGenerator = new Service.MockDataGenerator();
-            var consultantList = mockDataGenerator.GenerateRandomConsultantList(500, 200);
-            Console.WriteLine("Number of consultants: {0}, number of companies: {1}, id starts at: {2}",
+            mockDataGenerator = new MockDataGenerator();
+            var consultantList = mockDataGenerator.GenerateRandomConsultantList(500, 400);
+            Console.WriteLine("Generated the following data:");
+            Console.WriteLine("Number of consultants: {0}, number of companies: {1}, ConsultantId starts at: {2}",
                 consultantList.Count(),
                 consultantList[0].TraveltimesInMinutes.Count(),
                 consultantList[0].ConsultantId);
+            Console.WriteLine("Press any key to continue.");
             Console.ReadKey();
+            return consultantList;
         }
 
         private static void RunLinearProgrammingExample(String solverType)
@@ -56,7 +76,7 @@ namespace standard_ORtools
             Console.ReadLine();
         }
 
-        private static void SolveMinCostFlow()
+        private static void SolveMinCostFlowHardcodedExample()
         {
             Console.WriteLine("Setting up problem.");
             //           A1      A2      A3      Supply
@@ -128,6 +148,63 @@ namespace standard_ORtools
                 Console.WriteLine("");
                 Console.WriteLine(" Edge   Flow / Capacity  Cost");
                 for (int i = 0; i < numArcs; ++i)
+                {
+                    long cost = minCostFlow.Flow(i) * minCostFlow.UnitCost(i);
+                    Console.WriteLine(minCostFlow.Tail(i) + " -> " +
+                                      minCostFlow.Head(i) + "  " +
+                                      string.Format("{0,3}", minCostFlow.Flow(i)) + "  / " +
+                                      string.Format("{0,3}", minCostFlow.Capacity(i)) + "       " +
+                                      string.Format("{0,3}", cost));
+                }
+            }
+            else
+            {
+                Console.WriteLine("Solving the min cost flow problem failed. Solver status: " +
+                                  solveStatus);
+            }
+
+            //Wait and display solution
+            Console.ReadKey();
+        }
+
+        private static void SolveMinCostFlow(ParameterMap parameterMap)
+        {
+            Console.WriteLine("Setting up problem.");
+            MinCostFlow minCostFlow = new MinCostFlow();
+
+            Console.WriteLine("Adding arcs, amount: {0}", parameterMap.NumArcs);
+            for (int i = 0; i < parameterMap.NumArcs; ++i)
+            {
+                Console.WriteLine("Adding arc: {0}", i);
+                int arc = minCostFlow.AddArcWithCapacityAndUnitCost(parameterMap.StartNodes[i], parameterMap.EndNodes[i],
+                                                     parameterMap.Capacities[i], parameterMap.UnitCosts[i]);
+                //if (arc != i) throw new Exception("Internal error");
+            }
+
+            // Add node supplies.
+            Console.WriteLine("Adding node supplies, amount {0}", parameterMap.NumNodes);
+            for (int i = 0; i < parameterMap.NumNodes; ++i)
+            {
+                Console.WriteLine("Adding node supply: {0}", i);
+                minCostFlow.SetNodeSupply(i, parameterMap.Supplies[i]);
+            }
+
+            // Find the min cost flow.
+            //Console.WriteLine("Solving min cost flow with " + numNodes + " nodes, and " +
+            //                  numArcs + " arcs, source=" + source + ", sink=" + sink);
+
+
+            // Find the min cost flow.
+            Console.WriteLine("Trying to solve mincostflow");
+            int solveStatus = minCostFlow.Solve();
+
+            if (solveStatus == MinCostFlow.OPTIMAL)
+            {
+                long optimalCost = minCostFlow.OptimalCost();
+                Console.WriteLine("Minimum cost: " + optimalCost);
+                Console.WriteLine("");
+                Console.WriteLine(" Edge   Flow / Capacity  Cost");
+                for (int i = 0; i < parameterMap.NumArcs; ++i)
                 {
                     long cost = minCostFlow.Flow(i) * minCostFlow.UnitCost(i);
                     Console.WriteLine(minCostFlow.Tail(i) + " -> " +
