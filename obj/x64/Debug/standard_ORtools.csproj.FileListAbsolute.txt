@@ -8,3 +8,4 @@ C:\Users\bartk\source\repos\standard_ORtools\standard_ORtools\obj\x64\Debug\stan
 C:\Users\bartk\source\repos\standard_ORtools\standard_ORtools\obj\x64\Debug\standard_ORtools.csproj.CopyComplete
 C:\Users\bartk\source\repos\standard_ORtools\standard_ORtools\obj\x64\Debug\standard_ORtools.exe
 C:\Users\bartk\source\repos\standard_ORtools\standard_ORtools\obj\x64\Debug\standard_ORtools.pdb
+C:\Users\bartk\source\repos\standard_ORtools\standard_ORtools\obj\x64\Debug\standard_ORtools.csprojAssemblyReference.cache

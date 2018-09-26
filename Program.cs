@@ -5,20 +5,30 @@ using System.Collections.Generic;
 using System.Linq;
 using standard_ORtools.Service;
 using standard_ORtools.Model;
+using System.Diagnostics;
 
 namespace standard_ORtools
 {
     class Program
     {
         private static MockDataGenerator mockDataGenerator;
+        private static Stopwatch stopWatch;
+        private static int CONSULTANTS = 500;
+        private static int CLIENTS = 500;
 
         static void Main(string[] args)
+        {
+            StartProgram();
+        }
+
+        public static void StartProgram()
         {
             /*
             Console.WriteLine("Running test program, press enter to continue.");
             Console.ReadLine();
             RunLinearProgrammingExample("GLOP_LINEAR_PROGRAMMING");
             */
+
             Console.WriteLine("Program started");
 
             //Generate the consultants and clients.
@@ -30,21 +40,22 @@ namespace standard_ORtools
             Console.WriteLine("Press any key to start mapping the data to a useable format.");
             Console.ReadKey();
             var parameterMap = new ParameterMap(consultantsList);
+
+            //Show data information
             parameterMap.WriteDataToConsole();
-            parameterMap.WriteDetailedDataToConsole();
+            //parameterMap.WriteDetailedDataToConsole();
 
             //Do calculations
             Console.WriteLine("Press any key to start solving the problem.");
             Console.ReadKey();
             SolveMinCostFlow(parameterMap);
-
         }
 
         private static List<Consultant> GenerateConsultants()
         {
             Console.WriteLine("Generating testdata.");
             mockDataGenerator = new MockDataGenerator();
-            var consultantList = mockDataGenerator.GenerateRandomConsultantList(3, 3);
+            var consultantList = mockDataGenerator.GenerateRandomConsultantList(CONSULTANTS, CLIENTS);
             Console.WriteLine("Generated the following data:");
             Console.WriteLine("Number of consultants: {0}, number of companies: {1}, ConsultantId starts at: {2}",
                 consultantList.Count(),
@@ -136,7 +147,7 @@ namespace standard_ORtools
 
 
             // Find the min cost flow.
-            Console.WriteLine("Trying to solve mincostflow");
+            //Console.WriteLine("Trying to solve mincostflow");
             int solveStatus = minCostFlow.Solve();
 
             if (solveStatus == MinCostFlow.OPTIMAL)
@@ -167,6 +178,8 @@ namespace standard_ORtools
 
         private static void SolveMinCostFlow(ParameterMap parameterMap)
         {
+            stopWatch = Stopwatch.StartNew();
+
             Console.WriteLine("Setting up problem.");
             MinCostFlow minCostFlow = new MinCostFlow();
 
@@ -179,26 +192,24 @@ namespace standard_ORtools
                 //if (arc != i) throw new Exception("Internal error");
             }
 
-            // Add node supplies.
+            //Add node supplies.
             Console.WriteLine("Adding node supplies, amount {0}", parameterMap.NumNodes);
             for (int i = 0; i < parameterMap.NumNodes; ++i)
             {
-                Console.WriteLine("Adding node supply: {0}", i);
+                //Console.WriteLine("Adding node supply: {0}", i);
                 minCostFlow.SetNodeSupply(i, parameterMap.Supplies[i]);
             }
-
-            // Find the min cost flow.
-            //Console.WriteLine("Solving min cost flow with " + numNodes + " nodes, and " +
-            //                  numArcs + " arcs, source=" + source + ", sink=" + sink);
-
 
             // Find the min cost flow.
             Console.WriteLine("Trying to solve mincostflow");
             int solveStatus = minCostFlow.Solve();
 
+            long optimalCost = 0;
+
             if (solveStatus == MinCostFlow.OPTIMAL)
             {
-                long optimalCost = minCostFlow.OptimalCost();
+                optimalCost = minCostFlow.OptimalCost();
+                Console.WriteLine("");
                 Console.WriteLine("Minimum cost: " + optimalCost);
                 Console.WriteLine("");
                 Console.WriteLine(" Edge   Flow / Capacity  Cost");
@@ -218,7 +229,11 @@ namespace standard_ORtools
                                   solveStatus);
             }
 
+            stopWatch.Stop();
             //Wait and display solution
+            Console.WriteLine("Minimum cost: " + optimalCost);
+            Console.WriteLine("The calculation took: {0} miliseconds", stopWatch.ElapsedMilliseconds);
+            stopWatch.Reset();
             Console.ReadKey();
         }
     }

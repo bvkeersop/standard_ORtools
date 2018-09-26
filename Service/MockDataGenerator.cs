@@ -11,7 +11,8 @@ namespace standard_ORtools.Service
     {
         private Random random;
         private int currentId;
-        private const int maxTravelTime = 120;
+        private const int minTravelTime = 1;
+        private const int maxTravelTime = 5000;
 
         public MockDataGenerator()
         {
@@ -25,7 +26,7 @@ namespace standard_ORtools.Service
 
             for(int i = 0; i < size; i++)
             {
-                ttArray[i] = random.Next(maxTravelTime);
+                ttArray[i] = random.Next(minTravelTime, maxTravelTime);
             }
 
             return ttArray;
