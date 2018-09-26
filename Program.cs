@@ -3,8 +3,6 @@ using Google.OrTools.Graph;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using standard_ORtools.Service;
 using standard_ORtools.Model;
 
@@ -13,7 +11,6 @@ namespace standard_ORtools
     class Program
     {
         private static MockDataGenerator mockDataGenerator;
-        private static ParameterMap parameterMapper;
 
         static void Main(string[] args)
         {
@@ -34,6 +31,7 @@ namespace standard_ORtools
             Console.ReadKey();
             var parameterMap = new ParameterMap(consultantsList);
             parameterMap.WriteDataToConsole();
+            parameterMap.WriteDetailedDataToConsole();
 
             //Do calculations
             Console.WriteLine("Press any key to start solving the problem.");
@@ -46,7 +44,7 @@ namespace standard_ORtools
         {
             Console.WriteLine("Generating testdata.");
             mockDataGenerator = new MockDataGenerator();
-            var consultantList = mockDataGenerator.GenerateRandomConsultantList(500, 400);
+            var consultantList = mockDataGenerator.GenerateRandomConsultantList(3, 3);
             Console.WriteLine("Generated the following data:");
             Console.WriteLine("Number of consultants: {0}, number of companies: {1}, ConsultantId starts at: {2}",
                 consultantList.Count(),

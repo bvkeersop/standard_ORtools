@@ -19,14 +19,14 @@ namespace standard_ORtools.Service
         {
             int nmbrOfConsultants = consultants.Count();
             int nmbrOfClients = consultants[0].TraveltimesInMinutes.Count();
-            int endNodeStartId = nmbrOfConsultants + 1;
+            int nmbrOfArcs = GetNumberOfArcs(nmbrOfConsultants, nmbrOfClients);
 
             NumNodes = GetNumberOfNodes(nmbrOfConsultants, nmbrOfClients);
-            NumArcs = GetNumberOfArcs(nmbrOfConsultants, nmbrOfClients);
+            NumArcs = nmbrOfArcs;
             StartNodes = GetStartNodes(consultants);
-            EndNodes = GetEndNodes(endNodeStartId, nmbrOfClients, nmbrOfConsultants);
+            EndNodes = GetEndNodes(nmbrOfConsultants, nmbrOfClients, nmbrOfConsultants);
             UnitCosts = GetUnitCosts(consultants);
-            Capacities = GetCapacities(NumNodes);
+            Capacities = GetCapacities(nmbrOfArcs);
             Supplies = GetSupplies(nmbrOfConsultants, nmbrOfClients);
         }
 
@@ -83,12 +83,12 @@ namespace standard_ORtools.Service
             return unitCosts.ToArray();
         }
 
-        private int[] GetCapacities(int numberOfNodes)
+        private int[] GetCapacities(int numberOfArcs)
         {
             int capacityNumber = 1; //hardcoded for now
-            int[] capacity = new int[numberOfNodes];
+            int[] capacity = new int[numberOfArcs];
 
-            for(int i = 0; i < numberOfNodes; i++)
+            for(int i = 0; i < numberOfArcs; i++)
             {
                 capacity[i] = capacityNumber;
             }
@@ -123,9 +123,32 @@ namespace standard_ORtools.Service
         {
             Console.WriteLine("The following map is generated:");
             Console.WriteLine("NumNodes: {0}, Numarcs: {1}, StartNodes: {2}, EndNotes: {3}," +
-                " UnitCosts: {4}, Capacity: {5}, Supplies: {6}",
+                " UnitCosts: {4}, Capacities: {5}, Supplies: {6}",
                 NumNodes, NumArcs, StartNodes.Count(), EndNodes.Count(),
                 UnitCosts.Count(), Capacities.Count(), Supplies.Count());
+            Console.WriteLine("Press any key to continue.");
+            Console.ReadKey();
+        }
+
+        public void WriteDetailedDataToConsole()
+        {
+            Console.WriteLine("Warning, a lot of data could be shown, press any key to continue");
+            Console.ReadKey();
+            Console.WriteLine("NumNodes:");
+            Console.WriteLine(NumNodes);
+            Console.WriteLine("NumArcs:");
+            Console.WriteLine(NumArcs);
+            Console.WriteLine("StartNodes:");
+            Console.WriteLine(string.Join(",", StartNodes));
+            Console.WriteLine("EndNodes:");
+            Console.WriteLine(string.Join(",", EndNodes));
+            Console.WriteLine("UnitCosts:");
+            Console.WriteLine(string.Join(",", UnitCosts));
+            Console.WriteLine("Capacities:");
+            Console.WriteLine(string.Join(",", Capacities));
+            Console.WriteLine("Supplies:");
+            Console.WriteLine(string.Join(",", Supplies));
+
             Console.WriteLine("Press any key to continue.");
             Console.ReadKey();
         }
