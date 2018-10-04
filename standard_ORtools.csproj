@@ -69,11 +69,15 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ModelSolvers\CDFlowSolver.cs" />
+    <Compile Include="ModelSolvers\CDLinearSolver.cs" />
+    <Compile Include="ModelSolvers\CDTaskSolver.cs" />
+    <Compile Include="Model\ClientTime.cs" />
     <Compile Include="Model\Consultant.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Service\MockDataGenerator.cs" />
-    <Compile Include="Model\ParameterMap.cs" />
+    <Compile Include="Model\FlowParameterMap.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

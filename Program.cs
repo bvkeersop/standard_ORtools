@@ -6,19 +6,43 @@ using System.Linq;
 using standard_ORtools.Service;
 using standard_ORtools.Model;
 using System.Diagnostics;
+using standard_ORtools.ModelSolvers;
 
 namespace standard_ORtools
 {
     class Program
     {
-        private static MockDataGenerator mockDataGenerator;
+        private static MockDataGeneratorService mockDataGenerator;
         private static Stopwatch stopWatch;
-        private static int CONSULTANTS = 500;
-        private static int CLIENTS = 500;
+        private static int CONSULTANTS = 30;
+        private static int CLIENTS = 30;
 
         static void Main(string[] args)
         {
-            StartProgram();
+            //StartProgram();
+            var ls = new CDLinearSolver(GenerateConsultants());
+        }
+
+        private static void TestLinearStuff()
+        {
+            Solver solver = Solver.CreateSolver("LinearExample", "GLOP_LINEAR_PROGRAMMING");
+
+            Variable a = solver.MakeNumVar(0.0, double.PositiveInfinity, "a");
+            Variable b = solver.MakeNumVar(0.0, double.PositiveInfinity, "b");
+            Variable c = solver.MakeNumVar(0.0, double.PositiveInfinity, "b");
+
+            int[][] timeMatrix =
+                    {
+                        new int[] {1,2,3},
+                        new int[] {2,2,1},
+                        new int[] {1,3,1}
+                    };
+
+            //supply and demand
+            int[] sd = new int[] { 1, 1, 1 };
+
+            //Set the variable (we want to minimize the travel time).
+
         }
 
         public static void StartProgram()
@@ -39,7 +63,7 @@ namespace standard_ORtools
             //Map the data so it's usable.
             Console.WriteLine("Press any key to start mapping the data to a useable format.");
             Console.ReadKey();
-            var parameterMap = new ParameterMap(consultantsList);
+            var parameterMap = new FlowParameterMap(consultantsList);
 
             //Show data information
             parameterMap.WriteDataToConsole();
@@ -54,12 +78,12 @@ namespace standard_ORtools
         private static List<Consultant> GenerateConsultants()
         {
             Console.WriteLine("Generating testdata.");
-            mockDataGenerator = new MockDataGenerator();
+            mockDataGenerator = new MockDataGeneratorService();
             var consultantList = mockDataGenerator.GenerateRandomConsultantList(CONSULTANTS, CLIENTS);
             Console.WriteLine("Generated the following data:");
             Console.WriteLine("Number of consultants: {0}, number of companies: {1}, ConsultantId starts at: {2}",
                 consultantList.Count(),
-                consultantList[0].TraveltimesInMinutes.Count(),
+                consultantList[0].ClientAndTravelTime.Count,
                 consultantList[0].ConsultantId);
             Console.WriteLine("Press any key to continue.");
             Console.ReadKey();
@@ -176,7 +200,7 @@ namespace standard_ORtools
             Console.ReadKey();
         }
 
-        private static void SolveMinCostFlow(ParameterMap parameterMap)
+        private static void SolveMinCostFlow(FlowParameterMap parameterMap)
         {
             stopWatch = Stopwatch.StartNew();
 

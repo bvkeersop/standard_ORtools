@@ -1,35 +1,34 @@
 ﻿using standard_ORtools.Model;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace standard_ORtools.Service
 {
-    class MockDataGenerator
+    class MockDataGeneratorService
     {
         private Random random;
         private int currentId;
         private const int minTravelTime = 1;
         private const int maxTravelTime = 5000;
 
-        public MockDataGenerator()
+        public MockDataGeneratorService()
         {
             currentId = 0;
             random = new Random();
         }
       
-        private int[] GenerateTravelTimeArray(int size)
+        private List<ClientTime> GenerateTravelTimeArray(int size)
         {
             int[] ttArray = new int[size];
+            var travelTimeList = new List<ClientTime>();
 
-            for(int i = 0; i < size; i++)
+            for (int i = 0; i < size; i++)
             {
-                ttArray[i] = random.Next(minTravelTime, maxTravelTime);
+                int travelTime = random.Next(minTravelTime, maxTravelTime);
+                travelTimeList.Add(new ClientTime(i, travelTime));
             }
 
-            return ttArray;
+            return travelTimeList;
         }
 
         private int GetNextId()

@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace standard_ORtools.Service
 {
-    class ParameterMap
+    class FlowParameterMap
     {
         public int NumNodes { get; }
         public int NumArcs { get; }
@@ -15,10 +15,10 @@ namespace standard_ORtools.Service
         public int[] Capacities { get; }
         public int[] Supplies { get; }
 
-        public ParameterMap(List<Consultant> consultants)
+        public FlowParameterMap(List<Consultant> consultants)
         {
             int nmbrOfConsultants = consultants.Count();
-            int nmbrOfClients = consultants[0].TraveltimesInMinutes.Count();
+            int nmbrOfClients = consultants[0].ClientAndTravelTime.Count;
             int nmbrOfArcs = GetNumberOfArcs(nmbrOfConsultants, nmbrOfClients);
 
             NumNodes = GetNumberOfNodes(nmbrOfConsultants, nmbrOfClients);
@@ -43,7 +43,7 @@ namespace standard_ORtools.Service
         private int[] GetStartNodes(List<Consultant> consultants)
         {
             int numberOfConsultants = consultants.Count();
-            int numberOfClients = consultants[0].TraveltimesInMinutes.Count();
+            int numberOfClients = consultants[0].ClientAndTravelTime.Count;
 
             var startNodes = new List<int>();
 
@@ -77,7 +77,10 @@ namespace standard_ORtools.Service
 
             foreach(var consultant in consultants)
             {
-                unitCosts.AddRange(consultant.TraveltimesInMinutes);
+                foreach (var client in consultant.ClientAndTravelTime)
+                {
+                    unitCosts.Add(client.TimeInMinutes);
+                }
             }
 
             return unitCosts.ToArray();
