@@ -69,9 +69,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ModelSolvers\CDFlowSolver.cs" />
-    <Compile Include="ModelSolvers\CDLinearSolver.cs" />
-    <Compile Include="ModelSolvers\CDTaskSolver.cs" />
     <Compile Include="Model\ClientTime.cs" />
     <Compile Include="Model\Consultant.cs" />
     <Compile Include="Program.cs" />
@@ -82,6 +79,9 @@
   <ItemGroup>
     <None Include="App.config" />
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="ModelSolvers\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

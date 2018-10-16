@@ -6,7 +6,6 @@ using System.Linq;
 using standard_ORtools.Service;
 using standard_ORtools.Model;
 using System.Diagnostics;
-using standard_ORtools.ModelSolvers;
 
 namespace standard_ORtools
 {
@@ -19,8 +18,10 @@ namespace standard_ORtools
 
         static void Main(string[] args)
         {
-            //StartProgram();
-            var ls = new CDLinearSolver(GenerateConsultants());
+            var mocker = new MockDataGeneratorService();
+            FlowParameterMap flowParameterMap = 
+                new FlowParameterMap(mocker.GenerateRandomConsultantList(CONSULTANTS, CLIENTS));
+            SolveMinCostFlow(flowParameterMap);
         }
 
         private static void TestLinearStuff()
@@ -229,34 +230,29 @@ namespace standard_ORtools
             int solveStatus = minCostFlow.Solve();
 
             long optimalCost = 0;
+            optimalCost = minCostFlow.OptimalCost();
 
             if (solveStatus == MinCostFlow.OPTIMAL)
             {
-                optimalCost = minCostFlow.OptimalCost();
-                Console.WriteLine("");
-                Console.WriteLine("Minimum cost: " + optimalCost);
-                Console.WriteLine("");
-                Console.WriteLine(" Edge   Flow / Capacity  Cost");
+
                 for (int i = 0; i < parameterMap.NumArcs; ++i)
-                {
-                    long cost = minCostFlow.Flow(i) * minCostFlow.UnitCost(i);
-                    Console.WriteLine(minCostFlow.Tail(i) + " -> " +
-                                      minCostFlow.Head(i) + "  " +
-                                      string.Format("{0,3}", minCostFlow.Flow(i)) + "  / " +
-                                      string.Format("{0,3}", minCostFlow.Capacity(i)) + "       " +
-                                      string.Format("{0,3}", cost));
-                }
+                    if (minCostFlow.Flow(i) > 0)
+                    {
+                        long cost = minCostFlow.Flow(i) * minCostFlow.UnitCost(i);
+                        Console.WriteLine("Consultant" + minCostFlow.Tail(i) + " to Client" + minCostFlow.Head(i) + " with a traveltime of " + cost);
+                    }
             }
             else
             {
                 Console.WriteLine("Solving the min cost flow problem failed. Solver status: " +
                                   solveStatus);
             }
+          
 
             stopWatch.Stop();
             //Wait and display solution
             Console.WriteLine("Minimum cost: " + optimalCost);
-            Console.WriteLine("The calculation took: {0} miliseconds", stopWatch.ElapsedMilliseconds);
+            //Console.WriteLine("The calculation took: {0} miliseconds", stopWatch.ElapsedMilliseconds);
             stopWatch.Reset();
             Console.ReadKey();
         }
